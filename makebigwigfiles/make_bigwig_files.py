@@ -41,10 +41,7 @@ def is_paired(in_bam):
 def get_norm_constant(in_bam):
     samfile = pysam.AlignmentFile(in_bam)
 
-    if not is_paired(in_bam):
-        mapped_reads = float(samfile.mapped) / 1000000
-    else:  # approx mapped reads, not fragments.
-        mapped_reads = (float(samfile.mapped)/2.) / 1000000
+    mapped_reads = float(samfile.mapped) / 1000000
 
     norm_constant = 1. / mapped_reads
     return norm_constant

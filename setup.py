@@ -7,7 +7,7 @@ except ImportError:
 
 setup(
     name='makebigwigfiles',
-    version='0.0.1',
+    version='0.0.3',
     url='github.com/YeoLab/makebigwigfiles',
     license='',
     author='gpratt, adomissy, byee4',

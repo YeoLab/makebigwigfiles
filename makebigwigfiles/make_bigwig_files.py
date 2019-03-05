@@ -91,9 +91,11 @@ def main():
     parser.add_argument("--five_prime", help="plot only 5' end of fragment", action="store_true", default=False)
     parser.add_argument("--bw_pos", help="positive bw file name", required=True)
     parser.add_argument("--bw_neg", help="negative bw file name", required=True)
+    parser.add_argument("--direction", help="f (seCLIP), r (peCLIP)", default="f", required=False)
     args = parser.parse_args()
     bamFile = args.bam
     genome = args.genome
+    direction = args.direction
 
     check_for_index(bamFile)
 
@@ -107,22 +109,38 @@ def main():
     bedGraphFileNegSorted = bamFile.replace(".bam", ".sorted.norm.neg.bg")
 
     #Tracks are reversed because orientation of TrueSeq kits
-    genome_coverage_bed(in_bam=bamFile,
-                        out_bed_graph=bedGraphFilePos,
-                        strand="-", genome=genome,
-                        scale=norm_constant,
-                        five_prime=args.five_prime)
-    sort_bedgraph(bedGraphFilePos, bedGraphFilePosSorted)
-    bed_graph_to_big_wig(bedGraphFilePosSorted, genome, args.bw_pos)
+    if direction == 'r':
+        genome_coverage_bed(in_bam=bamFile,
+                            out_bed_graph=bedGraphFilePos,
+                            strand="-", genome=genome,
+                            scale=norm_constant,
+                            five_prime=args.five_prime)
+        sort_bedgraph(bedGraphFilePos, bedGraphFilePosSorted)
+        bed_graph_to_big_wig(bedGraphFilePosSorted, genome, args.bw_pos)
 
-    genome_coverage_bed(in_bam=bamFile,
-                        out_bed_graph=bedGraphFileNeg,
-                        strand="+", genome=genome,
-                        scale=neg_norm_constant,
-                        five_prime=args.five_prime)
-    sort_bedgraph(bedGraphFileNeg, bedGraphFileNegSorted)
-    bed_graph_to_big_wig(bedGraphFileNegSorted, genome, args.bw_neg)
+        genome_coverage_bed(in_bam=bamFile,
+                            out_bed_graph=bedGraphFileNeg,
+                            strand="+", genome=genome,
+                            scale=neg_norm_constant,
+                            five_prime=args.five_prime)
+        sort_bedgraph(bedGraphFileNeg, bedGraphFileNegSorted)
+        bed_graph_to_big_wig(bedGraphFileNegSorted, genome, args.bw_neg)
+    elif direction == 'f':
+        genome_coverage_bed(in_bam=bamFile,
+                            out_bed_graph=bedGraphFilePos,
+                            strand="+", genome=genome,
+                            scale=norm_constant,
+                            five_prime=args.five_prime)
+        sort_bedgraph(bedGraphFilePos, bedGraphFilePosSorted)
+        bed_graph_to_big_wig(bedGraphFilePosSorted, genome, args.bw_pos)
 
+        genome_coverage_bed(in_bam=bamFile,
+                            out_bed_graph=bedGraphFileNeg,
+                            strand="-", genome=genome,
+                            scale=neg_norm_constant,
+                            five_prime=args.five_prime)
+        sort_bedgraph(bedGraphFileNeg, bedGraphFileNegSorted)
+        bed_graph_to_big_wig(bedGraphFileNegSorted, genome, args.bw_neg)
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+### Sorts a bedgraph file ###
+
 INBEDGRAPH=$1
 GENOMECHROMSIZES=$2
 OUTBIGWIG=$3
